@@ -26,7 +26,7 @@ public class BasicSentimentAnalyzer implements SentimentAnalyzer {
 		this.timeOutMillis = timeOutMillis;
 	}
 
-	public PageSentiment analyze(String url) throws SentimentAnalysisException {
+	public PageSentiment analyzePage(String url) throws SentimentAnalysisException {
 		try {
 			ArticleExtractor articleExtractor = ArticleExtractor.getInstance();
 			SentimentAPI viveknAPI = new ViveknSentimentAPI();
