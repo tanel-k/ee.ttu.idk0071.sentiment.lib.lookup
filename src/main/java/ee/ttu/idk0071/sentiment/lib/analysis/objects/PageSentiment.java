@@ -2,7 +2,7 @@ package ee.ttu.idk0071.sentiment.lib.analysis.objects;
 
 public class PageSentiment {
 	private SentimentType sentimentType;
-	private float trustLevel;
+	private double trustLevel;
 
 	public SentimentType getSentimentType() {
 		return sentimentType;
@@ -12,11 +12,11 @@ public class PageSentiment {
 		this.sentimentType = sentimentType;
 	}
 
-	public float getTrustLevel() {
+	public double getTrustLevel() {
 		return trustLevel;
 	}
 
-	public void setTrustLevel(float trustLevel) {
+	public void setTrustLevel(double trustLevel) {
 		this.trustLevel = trustLevel;
 	}
 }
