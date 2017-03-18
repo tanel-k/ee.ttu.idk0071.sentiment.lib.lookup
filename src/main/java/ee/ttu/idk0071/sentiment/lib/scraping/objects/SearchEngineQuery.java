@@ -1,19 +1,9 @@
 package ee.ttu.idk0071.sentiment.lib.scraping.objects;
 
-public class SearchEngineQuery {
-	private String queryString;
-	private int maxResults;
+import ee.ttu.idk0071.sentiment.lib.searching.objects.GeneralQuery;
 
+public class SearchEngineQuery extends GeneralQuery {
 	public SearchEngineQuery(String queryString, int maxResults) {
-		this.queryString = queryString;
-		this.maxResults = maxResults;
-	}
-
-	public String getQueryString() {
-		return queryString;
-	}
-
-	public int getMaxResults() {
-		return maxResults;
+		super(queryString, maxResults);
 	}
 }

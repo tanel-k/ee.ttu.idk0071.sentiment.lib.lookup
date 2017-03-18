@@ -34,7 +34,7 @@ public class ViveknSentimentAPI implements SentimentAPI {
 			JsonObject jsonResult = responseJson.get("result").getAsJsonObject();
 			
 			PageSentiment sentiment = new PageSentiment();
-			sentiment.setTrustLevel(jsonResult.get("confidence").getAsFloat());
+			sentiment.setTrustLevel(jsonResult.get("confidence").getAsDouble());
 			sentiment.setSentimentType(SentimentType.valueOf(jsonResult.get("sentiment").getAsString().toUpperCase()));
 			return sentiment;
 		} catch (Throwable t) {

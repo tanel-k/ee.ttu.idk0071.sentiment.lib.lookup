@@ -34,16 +34,15 @@ public class GoogleScraper implements SearchEngineScraper {
 			String queryString = GOOGLE_QUERY_STRING.replace(QUERY_PLACEHOLDER, urlEncode(query.getQueryString()))
 					.replace(RESULT_COUNT_PLACEHOLDER, String.valueOf(query.getMaxResults()));
 			String endPoint = GOOGLE_SEARCH_ENDPOINT + queryString;
-
+			
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet get = new HttpGet(endPoint);
 			HttpResponse response = client.execute(get);
-
+			
 			return parseSearchResults(EntityUtils.toString(response.getEntity()));
 		} catch (Throwable t) {
 			return null;
 		}
-
 	}
 
 	private String urlEncode(String value) throws UnsupportedEncodingException {
@@ -53,11 +52,10 @@ public class GoogleScraper implements SearchEngineScraper {
 	private List<SearchEngineResult> parseSearchResults(String response) {
 		Document searchDoc = Jsoup.parse(response);
 		Elements contentDiv = searchDoc.select("div#search");
-
+		
 		List<SearchEngineResult> hits = new LinkedList<SearchEngineResult>();
 		Elements anchors = contentDiv.select("h3 a[href]");
-
-		int rank = 1;
+		
 		for (Element anchor : anchors) {
 			String anchorHref = anchor.attr("href");
 			Matcher urlMatcher = URL_PATTERN.matcher(anchorHref);
@@ -66,14 +64,13 @@ public class GoogleScraper implements SearchEngineScraper {
 				String url = urlMatcher.group(1);
 				if (!url.endsWith(".pdf")) {
 					SearchEngineResult result = new SearchEngineResult();
-					result.setRank(rank++);
 					result.setUrl(url);
 					result.setTitle(anchor.text());
 					hits.add(result);
 				}
 			}
 		}
-
+		
 		return hits;
 	}
 }
