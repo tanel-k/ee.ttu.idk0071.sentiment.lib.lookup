@@ -15,13 +15,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import ee.ttu.idk0071.sentiment.lib.analysis.SentimentAPI;
-import ee.ttu.idk0071.sentiment.lib.analysis.objects.PageSentiment;
+import ee.ttu.idk0071.sentiment.lib.analysis.SentimentRetrievalException;
+import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentResult;
 import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentType;
 
 public class ViveknSentimentAPI implements SentimentAPI {
 	private static final String API_URL = "http://sentiment.vivekn.com/api/text/";
 
-	public PageSentiment getSentiment(String text) {
+	public SentimentResult getSentiment(String text) throws SentimentRetrievalException {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpPost post = new HttpPost(API_URL);
@@ -33,12 +34,12 @@ public class ViveknSentimentAPI implements SentimentAPI {
 			JsonObject responseJson = new JsonParser().parse(response).getAsJsonObject();
 			JsonObject jsonResult = responseJson.get("result").getAsJsonObject();
 			
-			PageSentiment sentiment = new PageSentiment();
+			SentimentResult sentiment = new SentimentResult();
 			sentiment.setTrustLevel(jsonResult.get("confidence").getAsDouble());
 			sentiment.setSentimentType(SentimentType.valueOf(jsonResult.get("sentiment").getAsString().toUpperCase()));
 			return sentiment;
 		} catch (Throwable t) {
-			throw new RuntimeException(t);
+			throw new SentimentRetrievalException(t);
 		}
 	}
 }
