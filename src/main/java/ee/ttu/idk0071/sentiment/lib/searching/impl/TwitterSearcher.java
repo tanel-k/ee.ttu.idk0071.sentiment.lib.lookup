@@ -2,13 +2,12 @@ package ee.ttu.idk0071.sentiment.lib.searching.impl;
 
 import java.util.List;
 
-import ee.ttu.idk0071.sentiment.lib.searching.SocialMediaSearcher;
-import ee.ttu.idk0071.sentiment.lib.searching.objects.SocialMediaQuery;
-import ee.ttu.idk0071.sentiment.lib.searching.objects.SocialMediaResult;
+import ee.ttu.idk0071.sentiment.lib.searching.api.Searcher;
+import ee.ttu.idk0071.sentiment.lib.searching.objects.Query;
 
-public class TwitterSearcher implements SocialMediaSearcher {
+public class TwitterSearcher implements Searcher {
 
-	public List<SocialMediaResult> search(SocialMediaQuery query) {
+	public List<String> search(Query query) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 

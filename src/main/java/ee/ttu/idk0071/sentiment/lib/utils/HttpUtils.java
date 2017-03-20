@@ -7,14 +7,21 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
 public class HttpUtils {
+	public static final int DEFAULT_TIMEOUT = 2000;
+
 	public static class HtmlRetrievalException extends Exception {
 		private static final long serialVersionUID = 1000451880777957727L;
+		
 	
 		public HtmlRetrievalException(Throwable t) {
 			super(t);
 		}
 	}
-	
+
+	public static String getHtml(String url) throws HtmlRetrievalException {
+		return getHtml(url, DEFAULT_TIMEOUT);
+	}
+
 	public static String getHtml(String url, int timeout) throws HtmlRetrievalException {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();

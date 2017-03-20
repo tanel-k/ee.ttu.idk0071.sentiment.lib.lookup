@@ -1,4 +1,4 @@
-package ee.ttu.idk0071.sentiment.lib.scraping.impl;
+package ee.ttu.idk0071.sentiment.lib.searching.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -17,21 +17,24 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import ee.ttu.idk0071.sentiment.lib.scraping.SearchEngineScraper;
-import ee.ttu.idk0071.sentiment.lib.scraping.objects.SearchEngineQuery;
-import ee.ttu.idk0071.sentiment.lib.scraping.objects.SearchEngineResult;
+import ee.ttu.idk0071.sentiment.lib.searching.api.Searcher;
+import ee.ttu.idk0071.sentiment.lib.searching.objects.Query;
+import ee.ttu.idk0071.sentiment.lib.utils.HtmlUtils;
+import ee.ttu.idk0071.sentiment.lib.utils.HtmlUtils.TextExtractionException;
+import ee.ttu.idk0071.sentiment.lib.utils.HttpUtils;
+import ee.ttu.idk0071.sentiment.lib.utils.HttpUtils.HtmlRetrievalException;
 
-public class GoogleScraper implements SearchEngineScraper {
+public class GoogleSearcher implements Searcher {
 	private static final String QUERY_PLACEHOLDER = "%QUERY%";
 	private static final String RESULT_COUNT_PLACEHOLDER = "%COUNT%";
 	private static final String GOOGLE_SEARCH_ENDPOINT = "https://www.google.com/search";
 	private static final String GOOGLE_QUERY_STRING = "?q=" + QUERY_PLACEHOLDER + "&num=" + RESULT_COUNT_PLACEHOLDER;
 	private static final Pattern URL_PATTERN = Pattern.compile("/url\\?q=(.*)&sa.*");
 	
-	public List<SearchEngineResult> search(SearchEngineQuery query) {
+	public List<String> search(Query query) {
 		try
 		{
-			String queryString = GOOGLE_QUERY_STRING.replace(QUERY_PLACEHOLDER, urlEncode(query.getQueryString()))
+			String queryString = GOOGLE_QUERY_STRING.replace(QUERY_PLACEHOLDER, urlEncode(query.getKeyword()))
 					.replace(RESULT_COUNT_PLACEHOLDER, String.valueOf(query.getMaxResults()));
 			String endPoint = GOOGLE_SEARCH_ENDPOINT + queryString;
 			
@@ -49,11 +52,11 @@ public class GoogleScraper implements SearchEngineScraper {
 		return URLEncoder.encode(value, "UTF-8");
 	}
 
-	private List<SearchEngineResult> parseSearchResults(String response) {
+	private List<String> parseSearchResults(String response) {
 		Document searchDoc = Jsoup.parse(response);
 		Elements contentDiv = searchDoc.select("div#search");
 		
-		List<SearchEngineResult> hits = new LinkedList<SearchEngineResult>();
+		List<String> hits = new LinkedList<String>();
 		Elements anchors = contentDiv.select("h3 a[href]");
 		
 		for (Element anchor : anchors) {
@@ -62,11 +65,18 @@ public class GoogleScraper implements SearchEngineScraper {
 			
 			if (urlMatcher.matches()) {
 				String url = urlMatcher.group(1);
-				if (!url.endsWith(".pdf")) {
-					SearchEngineResult result = new SearchEngineResult();
-					result.setUrl(url);
-					result.setTitle(anchor.text());
-					hits.add(result);
+				
+				try {
+					String html = HttpUtils.getHtml(url);
+					String text = HtmlUtils.getText(html);
+					
+					hits.add(text);
+				} catch (TextExtractionException e) {
+					// no recovery
+					continue;
+				} catch (HtmlRetrievalException e) {
+					// no recovery
+					continue;
 				}
 			}
 		}
