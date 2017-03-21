@@ -14,14 +14,14 @@ import org.apache.http.util.EntityUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import ee.ttu.idk0071.sentiment.lib.analysis.SentimentAPI;
-import ee.ttu.idk0071.sentiment.lib.analysis.objects.PageSentiment;
+import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentAnalyzer;
+import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentRetrievalException;
 import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentType;
 
-public class ViveknSentimentAPI implements SentimentAPI {
+public class ViveknSentimentAnalyzer implements SentimentAnalyzer {
 	private static final String API_URL = "http://sentiment.vivekn.com/api/text/";
 
-	public PageSentiment getSentiment(String text) {
+	public SentimentType getSentiment(String text) throws SentimentRetrievalException {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpPost post = new HttpPost(API_URL);
@@ -33,12 +33,9 @@ public class ViveknSentimentAPI implements SentimentAPI {
 			JsonObject responseJson = new JsonParser().parse(response).getAsJsonObject();
 			JsonObject jsonResult = responseJson.get("result").getAsJsonObject();
 			
-			PageSentiment sentiment = new PageSentiment();
-			sentiment.setTrustLevel(jsonResult.get("confidence").getAsFloat());
-			sentiment.setSentimentType(SentimentType.valueOf(jsonResult.get("sentiment").getAsString().toUpperCase()));
-			return sentiment;
+			return SentimentType.valueOf(jsonResult.get("sentiment").getAsString().toUpperCase());
 		} catch (Throwable t) {
-			throw new RuntimeException(t);
+			throw new SentimentRetrievalException(t);
 		}
 	}
 }
