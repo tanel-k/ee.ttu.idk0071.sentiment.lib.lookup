@@ -1,11 +1,11 @@
-package ee.ttu.idk0071.sentiment.lib.searching.impl;
+package ee.ttu.idk0071.sentiment.lib.fetching.impl;
 
 import java.net.URL;
 import java.util.List;
 
-import ee.ttu.idk0071.sentiment.lib.searching.api.SearchEngineFetcher;
-import ee.ttu.idk0071.sentiment.lib.searching.objects.Query;
-import ee.ttu.idk0071.sentiment.lib.searching.objects.FetchException;
+import ee.ttu.idk0071.sentiment.lib.fetching.api.SearchEngineFetcher;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
 
 public class YahooFetcher extends SearchEngineFetcher {
 
