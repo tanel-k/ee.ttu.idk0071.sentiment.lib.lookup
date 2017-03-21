@@ -1,4 +1,4 @@
-package ee.ttu.idk0071.sentiment.lib.searching.impl;
+package ee.ttu.idk0071.sentiment.lib.fetching.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -19,9 +19,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import ee.ttu.idk0071.sentiment.lib.searching.api.SearchEngineFetcher;
-import ee.ttu.idk0071.sentiment.lib.searching.objects.Query;
-import ee.ttu.idk0071.sentiment.lib.searching.objects.FetchException;
+import ee.ttu.idk0071.sentiment.lib.fetching.api.SearchEngineFetcher;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
 
 public class GoogleFetcher extends SearchEngineFetcher {
 	private static final String QUERY_PLACEHOLDER = "%QUERY%";

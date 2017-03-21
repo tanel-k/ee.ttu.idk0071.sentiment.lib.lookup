@@ -1,4 +1,4 @@
-package ee.ttu.idk0071.sentiment.lib.searching.objects;
+package ee.ttu.idk0071.sentiment.lib.fetching.objects;
 
 public class Query {
 	private String keyword;

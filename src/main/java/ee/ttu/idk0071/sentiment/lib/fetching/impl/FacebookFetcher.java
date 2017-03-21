@@ -1,9 +1,9 @@
-package ee.ttu.idk0071.sentiment.lib.searching.impl;
+package ee.ttu.idk0071.sentiment.lib.fetching.impl;
 
 import java.util.List;
 
-import ee.ttu.idk0071.sentiment.lib.searching.api.Fetcher;
-import ee.ttu.idk0071.sentiment.lib.searching.objects.Query;
+import ee.ttu.idk0071.sentiment.lib.fetching.api.Fetcher;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
 
 public class FacebookFetcher implements Fetcher {
 
