@@ -3,7 +3,7 @@ package ee.ttu.idk0071.sentiment.lib.utils;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 
-public class HtmlUtils {
+public class HTMLUtils {
 	public static class TextExtractionException extends Exception {
 		private static final long serialVersionUID = -4444580746791264076L;
 	

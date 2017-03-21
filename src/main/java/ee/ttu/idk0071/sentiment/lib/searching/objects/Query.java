@@ -3,6 +3,7 @@ package ee.ttu.idk0071.sentiment.lib.searching.objects;
 public class Query {
 	private String keyword;
 	private Long maxResults;
+	private String securityToken;
 
 	public String getKeyword() {
 		return keyword;
@@ -18,6 +19,14 @@ public class Query {
 
 	public void setMaxResults(Long maxResults) {
 		this.maxResults = maxResults;
+	}
+
+	public String getSecurityToken() {
+		return securityToken;
+	}
+
+	public void setSecurityToken(String securityToken) {
+		this.securityToken = securityToken;
 	}
 
 	public Query() {
