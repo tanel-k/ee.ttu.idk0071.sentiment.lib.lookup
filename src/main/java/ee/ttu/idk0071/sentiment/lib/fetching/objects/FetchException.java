@@ -6,4 +6,12 @@ public class FetchException extends Exception {
 	public FetchException(Throwable t) {
 		super(t);
 	}
+
+	public FetchException(String message, Throwable t) {
+		super(message, t);
+	}
+
+	public FetchException(String message) {
+		super(message);
+	}
 }
