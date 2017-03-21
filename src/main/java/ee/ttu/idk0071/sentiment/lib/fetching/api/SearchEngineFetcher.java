@@ -6,6 +6,7 @@ import java.util.List;
 
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.ScrapeException;
 import ee.ttu.idk0071.sentiment.lib.utils.HTMLUtils;
 import ee.ttu.idk0071.sentiment.lib.utils.HTMLUtils.TextExtractionException;
 import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
@@ -13,14 +14,21 @@ import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils.HtmlRetrievalException;
 
 public abstract class SearchEngineFetcher implements Fetcher {
 	/**
-	 * Perform a search and scrape a list of the URLs the engine returns
+	 * Perform a search against the engine and retrieve (scrape) a list of URLs
 	 * 
-	 * @throws FetchException when the scraping cannot be completed
+	 * @throws ScrapeException when the search fails
 	 */
-	protected abstract List<URL> scrapeURLs(Query query) throws FetchException;
+	protected abstract List<URL> scrapeURLs(Query query) throws ScrapeException;
 
 	public List<String> fetch(Query query) throws FetchException {
-		List<URL> URLs = scrapeURLs(query);
+		List<URL> URLs;
+		
+		try {
+			URLs = scrapeURLs(query);
+		} catch (ScrapeException e) {
+			throw new FetchException(e);
+		}
+		
 		List<String> results = new LinkedList<String>();
 		
 		for (URL url : URLs) {

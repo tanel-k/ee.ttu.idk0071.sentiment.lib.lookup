@@ -7,9 +7,9 @@ import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
 
 public interface Fetcher {
 	/**
-	 * Retrieve a collection of Strings that match the specified query
+	 * Retrieve a collection of text Strings that the data source matches to the specified query
 	 * 
-	 * @throws FetchException when the fetch process cannot be completed
+	 * @throws FetchException when the fetching cannot be completed
 	 */
 	List<String> fetch(Query query) throws FetchException;
 }

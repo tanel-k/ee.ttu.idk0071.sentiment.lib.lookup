@@ -20,8 +20,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import ee.ttu.idk0071.sentiment.lib.fetching.api.SearchEngineFetcher;
-import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.ScrapeException;
 
 public class GoogleFetcher extends SearchEngineFetcher {
 	private static final String QUERY_PLACEHOLDER = "%QUERY%";
@@ -35,7 +35,7 @@ public class GoogleFetcher extends SearchEngineFetcher {
 	}
 
 	@Override
-	protected List<URL> scrapeURLs(Query query) throws FetchException {
+	protected List<URL> scrapeURLs(Query query) throws ScrapeException {
 		try
 		{
 			String queryString = GOOGLE_QUERY_STRING.replace(QUERY_PLACEHOLDER, urlEncode(query.getKeyword()))
@@ -48,7 +48,7 @@ public class GoogleFetcher extends SearchEngineFetcher {
 			
 			return parseSearchResults(EntityUtils.toString(response.getEntity()));
 		} catch (Throwable t) {
-			throw new FetchException(t);
+			throw new ScrapeException(t);
 		}
 	}
 
