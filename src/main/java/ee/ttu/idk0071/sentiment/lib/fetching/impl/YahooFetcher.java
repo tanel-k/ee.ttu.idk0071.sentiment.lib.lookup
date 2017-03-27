@@ -125,16 +125,18 @@ public class YahooFetcher extends SearchEngineFetcher {
 	public static void main(String [ ] args) throws ScrapeException
 	{
 		Query q = new Query();
-		q.setKeyword("Margus Tanneberg");
+		q.setKeyword("test");
 	    q.setMaxResults((long)44);
 		
 		YahooFetcher bf = new YahooFetcher();
 		List<URL> li = bf.scrapeURLs(q);
 		int len = li.size();
 		 
+		/*
 		for(int i = 0; i<len; i++){
 			System.out.println(li.get(i));
 		}
+		*/
 		
 		System.out.println(len);
 	}
