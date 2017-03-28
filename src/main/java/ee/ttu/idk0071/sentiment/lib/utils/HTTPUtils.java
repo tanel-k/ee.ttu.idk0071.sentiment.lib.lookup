@@ -1,6 +1,8 @@
 package ee.ttu.idk0071.sentiment.lib.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -39,5 +41,10 @@ public class HTTPUtils {
 		} catch (Exception ex) {
 			throw new HtmlRetrievalException(ex);
 		}
+	}
+
+
+	public static String urlEncode(String value) throws UnsupportedEncodingException {
+		return URLEncoder.encode(value, "UTF-8");
 	}
 }
