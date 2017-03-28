@@ -47,7 +47,7 @@ public class GoogleFetcher extends SearchEngineFetcher {
 			Set<URL> results = new HashSet<URL>();
 			long maxResults = query.getMaxResults();
 			
-			Long offset = 1L;
+			long offset = 1L;
 			Header cookieHeader = null;
 			do {
 				String queryString = buildQueryString(
@@ -63,7 +63,7 @@ public class GoogleFetcher extends SearchEngineFetcher {
 				HttpResponse response = client.execute(get);
 				
 				if (cookieHeader == null) {
-					cookieHeader = extractCookieHeader(response);
+					cookieHeader = HTTPUtils.extractCookieHeader(response);
 				} else {
 					get.addHeader(cookieHeader);
 				}
@@ -102,16 +102,6 @@ public class GoogleFetcher extends SearchEngineFetcher {
 
 	private String buildEndpointURL(String queryString) {
 		return GOOGLE_SEARCH_ENDPOINT + queryString;
-	}
-
-	private Header extractCookieHeader(HttpResponse response) {
-		StringBuilder cookieBuilder = new StringBuilder();
-		
-		for (Header setCookieHeader : response.getHeaders("Set-Cookie")) {
-			cookieBuilder.append(setCookieHeader.getValue());
-		}
-		
-		return new BasicHeader("Cookie", cookieBuilder.toString());
 	}
 
 	private List<URL> parseSearchResults(String response) {

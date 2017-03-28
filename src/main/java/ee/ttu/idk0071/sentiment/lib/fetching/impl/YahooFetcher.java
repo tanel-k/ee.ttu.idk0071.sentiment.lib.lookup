@@ -84,7 +84,6 @@ public class YahooFetcher extends SearchEngineFetcher {
 				
 				// throttle search frequency to avoid scrape detection
 				Thread.sleep(THROTTLE_MILLIS);
-				System.out.println(endPoint);
 			} while (results.size() < maxResults);
 			
 			return new LinkedList<URL>(results);
