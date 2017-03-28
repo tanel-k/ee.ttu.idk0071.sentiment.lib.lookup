@@ -35,7 +35,8 @@ public class GoogleFetcher extends SearchEngineFetcher {
 	private static final String OFFSET_PLACEHOLDER = "%OFFSET%";
 
 	private static final String GOOGLE_SEARCH_ENDPOINT = "https://www.google.com/search";
-	private static final String GOOGLE_QUERY_STRING = "?q=" + QUERY_PLACEHOLDER 
+	private static final String GOOGLE_QUERY_STRING = "?"
+			+ "q=" + QUERY_PLACEHOLDER 
 			+ "&num=" + RESULTS_PER_PAGE_PLACEHOLDER
 			+ "&start=" + OFFSET_PLACEHOLDER;
 
