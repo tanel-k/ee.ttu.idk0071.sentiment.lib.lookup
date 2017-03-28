@@ -27,7 +27,7 @@ import ee.ttu.idk0071.sentiment.lib.fetching.objects.ScrapeException;
 import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 
 public class GoogleFetcher extends SearchEngineFetcher {
-	private static final Long RESULTS_PER_PAGE = 50L;
+	private static final long RESULTS_PER_PAGE = 50L;
 	private static final int THROTTLE_MILLIS = 1000;
 
 	private static final String QUERY_PLACEHOLDER = "%QUERY%";
@@ -38,7 +38,6 @@ public class GoogleFetcher extends SearchEngineFetcher {
 	private static final String GOOGLE_QUERY_STRING = "?q=" + QUERY_PLACEHOLDER 
 			+ "&num=" + RESULTS_PER_PAGE_PLACEHOLDER
 			+ "&start=" + OFFSET_PLACEHOLDER;
-	private static final String USER_AGENT_HEADER = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 
 	@Override
 	protected List<URL> scrapeURLs(Query query) throws ScrapeException {;
@@ -59,7 +58,6 @@ public class GoogleFetcher extends SearchEngineFetcher {
 				
 				HttpClient client = HttpClientBuilder.create().build();
 				HttpGet get = new HttpGet(endPoint);
-				get.setHeader("User-Agent", USER_AGENT_HEADER);
 				
 				HttpResponse response = client.execute(get);
 				
@@ -93,12 +91,12 @@ public class GoogleFetcher extends SearchEngineFetcher {
 		}
 	}
 
-	private String buildQueryString(String keyword, Long resultsPerPage, Long offset) 
+	private String buildQueryString(String keyword, long resultsPerPage, long offset) 
 			throws UnsupportedEncodingException {
 		return GOOGLE_QUERY_STRING
 		.replace(QUERY_PLACEHOLDER, HTTPUtils.urlEncode(keyword))
-		.replace(RESULTS_PER_PAGE_PLACEHOLDER, RESULTS_PER_PAGE.toString())
-		.replace(OFFSET_PLACEHOLDER, offset.toString());
+		.replace(RESULTS_PER_PAGE_PLACEHOLDER, String.valueOf(resultsPerPage))
+		.replace(OFFSET_PLACEHOLDER, String.valueOf(offset));
 	}
 
 	private String buildEndpointURL(String queryString) {

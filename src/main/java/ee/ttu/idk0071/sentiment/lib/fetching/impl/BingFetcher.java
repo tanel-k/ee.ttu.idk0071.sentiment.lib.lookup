@@ -89,12 +89,12 @@ public class BingFetcher extends SearchEngineFetcher {
 		}
 	}
 
-	private String buildQueryString(String keyword, Long resultsPerPage, Long offset) 
+	private String buildQueryString(String keyword, long resultsPerPage, long offset) 
 		throws UnsupportedEncodingException {
 		return BING_SEARCH_QUERY_STRING
 			.replace(QUERY_PLACEHOLDER, HTTPUtils.urlEncode(keyword))
-			.replace(RESULTS_PER_PAGE_PLACEHOLDER, resultsPerPage.toString())
-			.replace(OFFSET_PLACEHOLDER, offset.toString());
+			.replace(RESULTS_PER_PAGE_PLACEHOLDER, String.valueOf(resultsPerPage))
+			.replace(OFFSET_PLACEHOLDER, String.valueOf(offset));
 	}
 
 	private String buildEndpointURL(String queryString) {

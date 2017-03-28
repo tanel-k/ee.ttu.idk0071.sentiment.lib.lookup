@@ -17,7 +17,7 @@ public class Query {
 		return maxResults;
 	}
 
-	public void setMaxResults(Long maxResults) {
+	public void setMaxResults(long maxResults) {
 		this.maxResults = maxResults;
 	}
 
@@ -33,7 +33,7 @@ public class Query {
 		
 	}
 
-	public Query(String keyword, Long maxResults) {
+	public Query(String keyword, long maxResults) {
 		this.keyword = keyword;
 		this.maxResults = maxResults;
 	}

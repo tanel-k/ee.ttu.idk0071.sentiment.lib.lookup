@@ -4,10 +4,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 public class HTTPUtils {
@@ -43,6 +46,15 @@ public class HTTPUtils {
 		}
 	}
 
+	public static Header extractCookieHeader(HttpResponse response) {
+		StringBuilder cookieBuilder = new StringBuilder();
+		
+		for (Header setCookieHeader : response.getHeaders("Set-Cookie")) {
+			cookieBuilder.append(setCookieHeader.getValue());
+		}
+		
+		return new BasicHeader("Cookie", cookieBuilder.toString());
+	}
 
 	public static String urlEncode(String value) throws UnsupportedEncodingException {
 		return URLEncoder.encode(value, "UTF-8");
