@@ -3,7 +3,7 @@ package ee.ttu.idk0071.sentiment.lib.fetching.objects;
 public class Query {
 	private String keyword;
 	private Long maxResults;
-	private String securityToken;
+	private Credentials credentials;
 
 	public String getKeyword() {
 		return keyword;
@@ -21,12 +21,12 @@ public class Query {
 		this.maxResults = maxResults;
 	}
 
-	public String getSecurityToken() {
-		return securityToken;
+	public Credentials getCredentials() {
+		return credentials;
 	}
 
-	public void setSecurityToken(String securityToken) {
-		this.securityToken = securityToken;
+	public void setCredentials(Credentials credentials) {
+		this.credentials = credentials;
 	}
 
 	public Query() {
