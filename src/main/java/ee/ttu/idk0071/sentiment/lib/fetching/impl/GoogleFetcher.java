@@ -103,18 +103,6 @@ public class GoogleFetcher extends SearchEngineFetcher {
 			.replace(OFFSET_PLACEHOLDER, String.valueOf(offset));
 	}
 
-	public static void main(String[] args) {
-		Query query = new Query();
-		query.setKeyword("Trump");
-		query.setMaxResults(100L);
-		try {
-			new GoogleFetcher().scrapeURLs(query);
-		} catch (ScrapeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	private String buildEndpointURL(String queryString) {
 		return GOOGLE_SEARCH_ENDPOINT + queryString;
 	}
