@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ee.ttu.idk0071.sentiment.lib.fetching.api.Fetcher;
+import ee.ttu.idk0071.sentiment.lib.fetching.objects.Credentials;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
 import twitter4j.QueryResult;
@@ -13,61 +14,61 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterFetcher implements Fetcher {
+	public static final String CRED_KEY_CONSUMER_KEY = "consumer-key";
+	public static final String CRED_KEY_CONSUMER_SECRET = "consumer-secret";
+	public static final String CRED_KEY_ACCESS_TOKEN = "access-token";
+	public static final String CRED_KEY_ACCESS_TOKEN_SECRET = "access-token-secret";
 
+	private static final String TWEET_LANG = "en";
+	/** Tweets per twitter4j.Query max = 100 */
+	private static final int TWEETS_PER_QUERY = 100;
+	
 	public List<String> fetch(Query query) throws FetchException {
-		int searchResultCount;
-		long lowestTweetId = Long.MAX_VALUE;
-		int maxresults = longToInt(query.getMaxResults());
-		
-		List<String> results = new LinkedList<String>();
-		
 		try {
-			do {
-				TwitterFactory tf = twitterAuth();
-				Twitter twitter = tf.getInstance();
-				twitter4j.Query twitterQuery = new twitter4j.Query(query.getKeyword()).count(maxresults).lang("en");
 				
-				QueryResult result = twitter.search(twitterQuery);
+			TwitterFactory tf = getTwitterFactoryForCreds(query.getCredentials());
+			Twitter twitter = tf.getInstance();
+			
+			long maxTweets = query.getMaxResults();
+			long cntTweetsRetrieved = 0L;
+			
+			twitter4j.Query twitterQuery = new twitter4j.Query(query.getKeyword())
+				.count(TWEETS_PER_QUERY)
+				.lang(TWEET_LANG);
+			
+			List<String> results = new LinkedList<String>();
+			PAGELOOP: do {
+				QueryResult twitterResult = twitter.search(twitterQuery);
 				
-				searchResultCount = result.getTweets().size();
-				maxresults -= searchResultCount;
-				
-				for (Status tweet : result.getTweets()) {
-					results.add(tweet.getText());
-					
-					if (tweet.getId() < lowestTweetId) {
-						lowestTweetId = tweet.getId();
-						twitterQuery.setMaxId(lowestTweetId);
+				for (Status tweet : twitterResult.getTweets()) {
+					if (maxTweets > cntTweetsRetrieved) {
+						results.add(tweet.getText());
+						cntTweetsRetrieved++;
+					} else {
+						break PAGELOOP;
 					}
 				}
-			} while (maxresults != 0 && maxresults > 0);
+				
+				if (!twitterResult.hasNext())
+					break;
+				
+				twitterQuery = twitterResult.nextQuery();
+			} while (maxTweets > cntTweetsRetrieved);
+			
+			return results;
+			
 		} catch (Throwable t) {
 			throw new FetchException(t);
 		}
-		
-		return results;
 	}
 
-	private TwitterFactory twitterAuth() {
-		ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setDebugEnabled(true).setOAuthConsumerKey("VyDoq2JP8ZVNXAvFhA0Al0M3Q")
-				.setOAuthConsumerSecret("KSA9Yec0XMBWtx6Pt9gJXiQpIstDkWbT55XoboM43IelgTjh4H")
-				.setOAuthAccessToken("2818155769-DrOgpOFsTTfFQgQJG00PscdRiRJsYr5RMfVe0mn")
-				.setOAuthAccessTokenSecret("zdd5qdUe75K6lw0NmkSv4hVaYIcf7dOV8CZP3z0Fkvvo4");
-		TwitterFactory tf = new TwitterFactory(cb.build());
-		return tf;
-	}
-
-	private int longToInt(Long l) {
-		if (l > Integer.MAX_VALUE) {
-			System.out.println("int: " + Integer.MAX_VALUE);
-			return Integer.MAX_VALUE;
-		}
-		if (l < Integer.MIN_VALUE) {
-			System.out.println("int: " + Integer.MIN_VALUE);
-			return Integer.MIN_VALUE;
-		}
-		System.out.println("int: " + (int) (long) l);
-		return (int) (long) l;
+	private TwitterFactory getTwitterFactoryForCreds(Credentials credentials) {
+		ConfigurationBuilder builder = new ConfigurationBuilder();
+		builder.setDebugEnabled(false)
+			.setOAuthConsumerKey(credentials.get(CRED_KEY_CONSUMER_KEY))
+			.setOAuthConsumerSecret(credentials.get(CRED_KEY_CONSUMER_SECRET))
+			.setOAuthAccessToken(credentials.get(CRED_KEY_ACCESS_TOKEN))
+			.setOAuthAccessTokenSecret(credentials.get(CRED_KEY_ACCESS_TOKEN_SECRET));
+		return new TwitterFactory(builder.build());
 	}
 }
