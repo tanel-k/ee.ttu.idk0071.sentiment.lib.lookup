@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -28,6 +30,8 @@ import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 public class GoogleFetcher extends SearchEngineFetcher {
 	private static final long RESULTS_PER_PAGE = 50L;
 	private static final int THROTTLE_MILLIS = 1000;
+
+	private static final Pattern URL_EXTRACTION_PATTERN = Pattern.compile("/url\\?q=(.*)&sa.*");
 
 	private static final String QUERY_PLACEHOLDER = "%QUERY%";
 	private static final String RESULTS_PER_PAGE_PLACEHOLDER = "%COUNT%";
@@ -94,9 +98,9 @@ public class GoogleFetcher extends SearchEngineFetcher {
 	private String buildQueryString(String keyword, long resultsPerPage, long offset) 
 			throws UnsupportedEncodingException {
 		return GOOGLE_QUERY_STRING
-		.replace(QUERY_PLACEHOLDER, HTTPUtils.urlEncode(keyword))
-		.replace(RESULTS_PER_PAGE_PLACEHOLDER, String.valueOf(resultsPerPage))
-		.replace(OFFSET_PLACEHOLDER, String.valueOf(offset));
+			.replace(QUERY_PLACEHOLDER, HTTPUtils.urlEncode(keyword))
+			.replace(RESULTS_PER_PAGE_PLACEHOLDER, String.valueOf(resultsPerPage))
+			.replace(OFFSET_PLACEHOLDER, String.valueOf(offset));
 	}
 
 	private String buildEndpointURL(String queryString) {
@@ -112,6 +116,11 @@ public class GoogleFetcher extends SearchEngineFetcher {
 		
 		for (Element anchor : anchors) {
 			String anchorHref = anchor.attr("href");
+			
+			Matcher URLMatcher = URL_EXTRACTION_PATTERN.matcher(anchorHref);
+			if (URLMatcher.matches()) {
+				anchorHref = URLMatcher.group(1);
+			}
 			
 			try {
 				hits.add(new URL(anchorHref));
