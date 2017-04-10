@@ -48,7 +48,7 @@ public class BingFetcher extends SearchEngineFetcher {
 			
 			// Bing may end up repeating the last page
 			long allowedUselessQueriesCnt = USELESS_QUERY_LIMIT;
-			int lastResultCount = results.size();
+			Integer lastResultCount = null;
 			
 			do {
 				String queryString = buildQueryString(query.getKeyword(), RESULTS_PER_PAGE, offset);
@@ -57,6 +57,7 @@ public class BingFetcher extends SearchEngineFetcher {
 				
 				HttpClient client = HttpClientBuilder.create().build();
 				HttpGet get = new HttpGet(endPoint);
+				
 				HttpResponse response = client.execute(get);
 				
 				List<URL> pageResults = parseSearchResults(
@@ -72,10 +73,11 @@ public class BingFetcher extends SearchEngineFetcher {
 				}
 				
 				// no new pages added = useless query
-				if (lastResultCount == results.size()) {
+				if (lastResultCount != null && lastResultCount == results.size()) {
 					allowedUselessQueriesCnt--;
 				} else {
-					allowedUselessQueriesCnt = 0;
+					// reset
+					allowedUselessQueriesCnt = USELESS_QUERY_LIMIT;
 				}
 				
 				lastResultCount = results.size();
