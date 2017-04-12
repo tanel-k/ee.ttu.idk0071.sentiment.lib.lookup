@@ -18,18 +18,45 @@ public class HTTPUtils {
 
 	public static class HtmlRetrievalException extends Exception {
 		private static final long serialVersionUID = 1000451880777957727L;
-		
 	
 		public HtmlRetrievalException(Throwable t) {
 			super(t);
 		}
 	}
 
-	public static String getHtml(URL fromURL) throws HtmlRetrievalException {
-		return getHtml(fromURL, DEFAULT_TIMEOUT);
+	public static class HTTPException extends Exception {
+		private static final long serialVersionUID = 478702341159106923L;
+		
+		public HTTPException(Throwable t) {
+			super(t);
+		}
 	}
 
-	public static String getHtml(URL fromURL, int timeout) throws HtmlRetrievalException {
+	public static HttpResponse get(String URL, Header... headers) throws HTTPException {
+		try {
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet get = new HttpGet(URL);
+			
+			for (Header header : headers) {
+				get.addHeader(header);
+			}
+			
+			HttpResponse response = client.execute(get);
+			return response;
+		} catch (Throwable t) {
+			throw new HTTPException(t);
+		}
+	}
+
+	public static HttpResponse get(URL fromURL, Header...headers) throws HTTPException {
+		return get(fromURL.toString(), headers);
+	}
+
+	public static String getStringWithTimeout(URL fromURL) throws HtmlRetrievalException {
+		return getStringWithTimeout(fromURL, DEFAULT_TIMEOUT);
+	}
+
+	public static String getStringWithTimeout(URL fromURL, int timeout) throws HtmlRetrievalException {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
 			RequestConfig requestConfig = RequestConfig.custom()
