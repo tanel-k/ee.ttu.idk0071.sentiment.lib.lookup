@@ -9,6 +9,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
@@ -41,8 +42,7 @@ public class HTTPUtils {
 				get.addHeader(header);
 			}
 			
-			HttpResponse response = client.execute(get);
-			return response;
+			return client.execute(get);
 		} catch (Throwable t) {
 			throw new HTTPException(t);
 		}
@@ -50,6 +50,26 @@ public class HTTPUtils {
 
 	public static HttpResponse get(URL fromURL, Header...headers) throws HTTPException {
 		return get(fromURL.toString(), headers);
+	}
+
+	public static HttpResponse head(String URL) throws HTTPException {
+		try {
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpHead head = new HttpHead(URL);
+			return client.execute(head);
+		} catch (Throwable t) {
+			throw new HTTPException(t);
+		}
+	}
+
+	public static boolean checkHeadOK(String URL) {
+		try {
+			HttpResponse headResponse = HTTPUtils.head(URL);
+			int statusCode = headResponse.getStatusLine().getStatusCode();
+			return statusCode >= 200 && statusCode <= 299;
+		} catch (Throwable t) {
+			return false;
+		}
 	}
 
 	public static String getStringWithTimeout(URL fromURL) throws HtmlRetrievalException {

@@ -4,4 +4,6 @@ import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentType;
 
 public interface SentimentAnalyzer {
 	public SentimentType getSentiment(String text) throws SentimentRetrievalException;
+
+	public boolean isAvailable();
 }

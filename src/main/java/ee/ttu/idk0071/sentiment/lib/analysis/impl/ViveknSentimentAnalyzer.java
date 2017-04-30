@@ -17,9 +17,11 @@ import com.google.gson.JsonParser;
 import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentAnalyzer;
 import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentRetrievalException;
 import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentType;
+import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 
 public class ViveknSentimentAnalyzer implements SentimentAnalyzer {
 	private static final String API_URL = "http://sentiment.vivekn.com/api/text/";
+	private static final String MAIN_PAGE_URL = "http://sentiment.vivekn.com";
 
 	public SentimentType getSentiment(String text) throws SentimentRetrievalException {
 		try {
@@ -37,5 +39,9 @@ public class ViveknSentimentAnalyzer implements SentimentAnalyzer {
 		} catch (Throwable t) {
 			throw new SentimentRetrievalException(t);
 		}
+	}
+
+	public boolean isAvailable() {
+		return HTTPUtils.checkHeadOK(MAIN_PAGE_URL);
 	}
 }
