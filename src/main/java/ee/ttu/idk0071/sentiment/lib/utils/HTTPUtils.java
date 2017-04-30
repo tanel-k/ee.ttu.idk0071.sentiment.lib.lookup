@@ -65,11 +65,15 @@ public class HTTPUtils {
 	public static boolean checkHeadOK(String URL) {
 		try {
 			HttpResponse headResponse = HTTPUtils.head(URL);
-			int statusCode = headResponse.getStatusLine().getStatusCode();
-			return statusCode >= 200 && statusCode <= 299;
+			return checkResponseOK(headResponse);
 		} catch (Throwable t) {
 			return false;
 		}
+	}
+
+	public static boolean checkResponseOK(HttpResponse response) {
+		int statusCode = response.getStatusLine().getStatusCode();
+		return statusCode >= 200 && statusCode <= 299;
 	}
 
 	public static String getStringWithTimeout(URL fromURL) throws HtmlRetrievalException {

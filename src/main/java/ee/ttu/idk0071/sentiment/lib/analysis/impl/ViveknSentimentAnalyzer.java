@@ -3,6 +3,7 @@ package ee.ttu.idk0071.sentiment.lib.analysis.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -23,6 +24,7 @@ public class ViveknSentimentAnalyzer implements SentimentAnalyzer {
 	private static final String API_URL = "http://sentiment.vivekn.com/api/text/";
 	private static final String MAIN_PAGE_URL = "http://sentiment.vivekn.com";
 
+	@Override
 	public SentimentType getSentiment(String text) throws SentimentRetrievalException {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
@@ -31,16 +33,27 @@ public class ViveknSentimentAnalyzer implements SentimentAnalyzer {
 			nameValuePairs.add(new BasicNameValuePair("txt", text));
 			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			
-			String response = EntityUtils.toString(client.execute(post).getEntity());
-			JsonObject responseJson = new JsonParser().parse(response).getAsJsonObject();
-			JsonObject jsonResult = responseJson.get("result").getAsJsonObject();
+			HttpResponse response = client.execute(post);
+			if (!HTTPUtils.checkResponseOK(response)) {
+				throw new SentimentRetrievalException("Rejected according to response code");
+			}
 			
-			return SentimentType.valueOf(jsonResult.get("sentiment").getAsString().toUpperCase());
+			String responseString = EntityUtils.toString(client.execute(post).getEntity());
+			JsonObject responseJson = new JsonParser().parse(responseString).getAsJsonObject();
+			JsonObject jsonResult = responseJson.get("result").getAsJsonObject();
+			String sentimentString = jsonResult.get("sentiment").getAsString();
+			
+			if (sentimentString == null) {
+				throw new SentimentRetrievalException("Response did not contain a sentiment estimation");
+			}
+			
+			return SentimentType.valueOf(sentimentString.toUpperCase());
 		} catch (Throwable t) {
 			throw new SentimentRetrievalException(t);
 		}
 	}
 
+	@Override
 	public boolean isAvailable() {
 		return HTTPUtils.checkHeadOK(MAIN_PAGE_URL);
 	}
