@@ -25,7 +25,7 @@ public class TwitterFetcher implements Fetcher {
 	
 	public List<String> fetch(Query query) throws FetchException {
 		try {
-				
+			
 			TwitterFactory tf = getTwitterFactoryForCreds(query.getCredentials());
 			Twitter twitter = tf.getInstance();
 			

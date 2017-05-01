@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.http.Header;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -15,6 +16,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 public class HTTPUtils {
+	public static final String DEFAULT_USER_AGENT = "SentimentBot";
 	public static final int DEFAULT_TIMEOUT = 2000;
 
 	public static class HtmlRetrievalException extends Exception {
@@ -109,5 +111,13 @@ public class HTTPUtils {
 
 	public static String urlEncode(String value) throws UnsupportedEncodingException {
 		return URLEncoder.encode(value, "UTF-8");
+	}
+
+	public static void setUserAgentHeader(HttpRequest request) {
+		setUserAgentHeader(request, DEFAULT_USER_AGENT);
+	}
+
+	public static void setUserAgentHeader(HttpRequest request, String value) {
+		request.setHeader("User-Agent", value);
 	}
 }
