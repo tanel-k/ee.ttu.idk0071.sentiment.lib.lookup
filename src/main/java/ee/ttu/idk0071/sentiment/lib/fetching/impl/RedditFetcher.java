@@ -20,6 +20,7 @@ import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 import ee.ttu.idk0071.sentiment.lib.utils.StringUtils;
 
 public class RedditFetcher implements Fetcher {
+	private static final long THROTTLE_MILLIS = 500;
 	private static final String PROP_TITLE = "title";
 	private static final String PROP_SELF_TEXT = "selftext";
 	private static final String PROP_CHILDREN = "children";
@@ -74,6 +75,11 @@ public class RedditFetcher implements Fetcher {
 					}
 				}
 				
+				try {
+					Thread.sleep(THROTTLE_MILLIS);
+				} catch (InterruptedException ex) {
+					// don't care
+				}
 				pagedURL = queryURL + "&" + PARAM_AFTER + "=" + afterKey;
 			} while (!StringUtils.isEmpty(afterKey) && results.size() < query.getMaxResults());
 			
