@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -118,6 +119,6 @@ public class HTTPUtils {
 	}
 
 	public static void setUserAgentHeader(HttpRequest request, String value) {
-		request.setHeader("User-Agent", value);
+		request.setHeader(HttpHeaders.USER_AGENT, value);
 	}
 }
