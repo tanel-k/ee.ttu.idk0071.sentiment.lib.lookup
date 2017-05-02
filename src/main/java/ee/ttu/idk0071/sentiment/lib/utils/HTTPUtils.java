@@ -5,6 +5,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -15,12 +17,13 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 public class HTTPUtils {
+	public static final String DEFAULT_USER_AGENT = "SentimentBot";
 	public static final int DEFAULT_TIMEOUT = 2000;
 
-	public static class HtmlRetrievalException extends Exception {
+	public static class HTMLRetrievalException extends Exception {
 		private static final long serialVersionUID = 1000451880777957727L;
 	
-		public HtmlRetrievalException(Throwable t) {
+		public HTMLRetrievalException(Throwable t) {
 			super(t);
 		}
 	}
@@ -76,11 +79,11 @@ public class HTTPUtils {
 		return statusCode >= 200 && statusCode <= 299;
 	}
 
-	public static String getStringWithTimeout(URL fromURL) throws HtmlRetrievalException {
+	public static String getStringWithTimeout(URL fromURL) throws HTMLRetrievalException {
 		return getStringWithTimeout(fromURL, DEFAULT_TIMEOUT);
 	}
 
-	public static String getStringWithTimeout(URL fromURL, int timeout) throws HtmlRetrievalException {
+	public static String getStringWithTimeout(URL fromURL, int timeout) throws HTMLRetrievalException {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
 			RequestConfig requestConfig = RequestConfig.custom()
@@ -93,7 +96,7 @@ public class HTTPUtils {
 			
 			return EntityUtils.toString(client.execute(get).getEntity());
 		} catch (Exception ex) {
-			throw new HtmlRetrievalException(ex);
+			throw new HTMLRetrievalException(ex);
 		}
 	}
 
@@ -109,5 +112,13 @@ public class HTTPUtils {
 
 	public static String urlEncode(String value) throws UnsupportedEncodingException {
 		return URLEncoder.encode(value, "UTF-8");
+	}
+
+	public static void setUserAgentHeader(HttpRequest request) {
+		setUserAgentHeader(request, DEFAULT_USER_AGENT);
+	}
+
+	public static void setUserAgentHeader(HttpRequest request, String value) {
+		request.setHeader(HttpHeaders.USER_AGENT, value);
 	}
 }
