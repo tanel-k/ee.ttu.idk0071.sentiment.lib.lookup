@@ -23,7 +23,7 @@ import ee.ttu.idk0071.sentiment.lib.fetching.objects.ScrapeException;
 import ee.ttu.idk0071.sentiment.lib.utils.HTMLUtils;
 import ee.ttu.idk0071.sentiment.lib.utils.HTMLUtils.TextExtractionException;
 import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
-import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils.HtmlRetrievalException;
+import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils.HTMLRetrievalException;
 
 /**
  * General scaffolding for a search engine scraper.
@@ -168,7 +168,7 @@ public abstract class SearchEngineFetcher implements Fetcher {
 				String html = HTTPUtils.getStringWithTimeout(URL);
 				String text = HTMLUtils.getText(html);
 				results.add(text);
-			} catch (HtmlRetrievalException e) {
+			} catch (HTMLRetrievalException e) {
 				// no recovery
 			} catch (TextExtractionException e) {
 				// no recovery

@@ -20,10 +20,10 @@ public class HTTPUtils {
 	public static final String DEFAULT_USER_AGENT = "SentimentBot";
 	public static final int DEFAULT_TIMEOUT = 2000;
 
-	public static class HtmlRetrievalException extends Exception {
+	public static class HTMLRetrievalException extends Exception {
 		private static final long serialVersionUID = 1000451880777957727L;
 	
-		public HtmlRetrievalException(Throwable t) {
+		public HTMLRetrievalException(Throwable t) {
 			super(t);
 		}
 	}
@@ -79,11 +79,11 @@ public class HTTPUtils {
 		return statusCode >= 200 && statusCode <= 299;
 	}
 
-	public static String getStringWithTimeout(URL fromURL) throws HtmlRetrievalException {
+	public static String getStringWithTimeout(URL fromURL) throws HTMLRetrievalException {
 		return getStringWithTimeout(fromURL, DEFAULT_TIMEOUT);
 	}
 
-	public static String getStringWithTimeout(URL fromURL, int timeout) throws HtmlRetrievalException {
+	public static String getStringWithTimeout(URL fromURL, int timeout) throws HTMLRetrievalException {
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
 			RequestConfig requestConfig = RequestConfig.custom()
@@ -96,7 +96,7 @@ public class HTTPUtils {
 			
 			return EntityUtils.toString(client.execute(get).getEntity());
 		} catch (Exception ex) {
-			throw new HtmlRetrievalException(ex);
+			throw new HTMLRetrievalException(ex);
 		}
 	}
 

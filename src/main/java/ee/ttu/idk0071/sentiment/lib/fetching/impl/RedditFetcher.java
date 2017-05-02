@@ -73,6 +73,8 @@ public class RedditFetcher implements Fetcher {
 							break PRIMARY;
 						}
 					}
+				} else {
+					break;
 				}
 				
 				try {
