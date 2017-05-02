@@ -213,21 +213,4 @@ public class GoogleUtils {
 			nextPage();
 		}
 	}
-
-	public static void main(String[] args) {
-		GoogleScraper searcher = new GoogleScraper();
-		searcher.setQuery("voles");
-		Set<URL> all = new HashSet<URL>();
-		while (!searcher.isOnLastPage()) {
-			try {
-				searcher.nextPageThrottled();
-				all.addAll(searcher.getURLsFromPage());
-				System.out.println(all.size());
-			} catch (GoogleException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				break;
-			}
-		}
-	}
 }
