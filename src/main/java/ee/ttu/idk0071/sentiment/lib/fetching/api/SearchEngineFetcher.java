@@ -16,7 +16,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.ScrapeException;
@@ -32,13 +34,17 @@ public abstract class SearchEngineFetcher implements Fetcher {
 	protected static final String QUERY_PLACEHOLDER = "%QUERY%";
 	protected static final String RESULTS_PER_PAGE_PLACEHOLDER = "%RESULTS_PER_PAGE%";
 	protected static final String OFFSET_PLACEHOLDER = "%OFFSET%";
-
+	
+	private static final String CLASS_NAME = SearchEngineFetcher.class.getName();
 	private static final int USELESS_QUERY_LIMIT = 3;
 
 	private Long minThrottleMillis;
 	private long maxResultsPerPage;
 	private String searchPageURLTemplate;
 	private String anchorSelector;
+	
+	@Autowired
+	public ErrorService errorService;
 
 	/**
 	 * Fetch texts found by the search engine for the specified query.
@@ -49,6 +55,7 @@ public abstract class SearchEngineFetcher implements Fetcher {
 		try {
 			URLs = scrapeURLs(query);
 		} catch (ScrapeException e) {
+			errorService.saveError(e, CLASS_NAME);
 			throw new FetchException(e);
 		}
 		
@@ -111,6 +118,7 @@ public abstract class SearchEngineFetcher implements Fetcher {
 			
 			return new LinkedList<URL>(results);
 		} catch (Throwable t) {
+			errorService.saveError(t, CLASS_NAME);
 			throw new ScrapeException(t);
 		}
 	}
@@ -130,6 +138,7 @@ public abstract class SearchEngineFetcher implements Fetcher {
 				pageURLs.add(new URL(anchorHref));
 			} catch (MalformedURLException ex) {
 				// no recovery
+				errorService.saveError(ex, CLASS_NAME);
 				continue;
 			}
 		}
@@ -170,8 +179,10 @@ public abstract class SearchEngineFetcher implements Fetcher {
 				results.add(text);
 			} catch (HTMLRetrievalException e) {
 				// no recovery
+				errorService.saveError(e, CLASS_NAME);
 			} catch (TextExtractionException e) {
 				// no recovery
+				errorService.saveError(e, CLASS_NAME);
 			}
 		}
 		

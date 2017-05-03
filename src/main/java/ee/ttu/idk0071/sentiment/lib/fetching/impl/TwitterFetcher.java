@@ -3,6 +3,9 @@ package ee.ttu.idk0071.sentiment.lib.fetching.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.lib.fetching.api.Fetcher;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.Credentials;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
@@ -18,10 +21,14 @@ public class TwitterFetcher implements Fetcher {
 	public static final String CRED_KEY_CONSUMER_SECRET = "consumer-secret";
 	public static final String CRED_KEY_ACCESS_TOKEN = "access-token";
 	public static final String CRED_KEY_ACCESS_TOKEN_SECRET = "access-token-secret";
+	private static final String CLASS_NAME = TwitterFetcher.class.getName();
 
 	private static final String TWEET_LANG = "en";
 	/** Tweets per twitter4j.Query max = 100 */
 	private static final int TWEETS_PER_QUERY = 100;
+	
+	@Autowired
+	public ErrorService errorService;
 	
 	public List<String> fetch(Query query) throws FetchException {
 		try {
@@ -58,6 +65,7 @@ public class TwitterFetcher implements Fetcher {
 			return results;
 			
 		} catch (Throwable t) {
+			errorService.saveError(t, CLASS_NAME);
 			throw new FetchException(t);
 		}
 	}

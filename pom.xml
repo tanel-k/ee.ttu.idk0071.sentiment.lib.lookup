@@ -13,6 +13,12 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>ee.ttu.idk0071.sentiment.lib</groupId>
+			<artifactId>errorHandling</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.10.2</version>

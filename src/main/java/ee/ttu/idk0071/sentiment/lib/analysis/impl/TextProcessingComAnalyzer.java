@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -20,6 +21,7 @@ import com.google.gson.JsonParser;
 import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentAnalyzer;
 import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentRetrievalException;
 import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentType;
+import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 
 public class TextProcessingComAnalyzer implements SentimentAnalyzer {
@@ -27,6 +29,10 @@ public class TextProcessingComAnalyzer implements SentimentAnalyzer {
 	private static final String API_TEST_TEXT = "great";
 	private static final SentimentType API_TEST_TEXT_SENTIMENT = SentimentType.POSITIVE;
 	private static final Map<String, SentimentType> SENTIMENT_LABEL_MAP = new ConcurrentHashMap<>();
+	private static final String CLASS_NAME = TextProcessingComAnalyzer.class.getName();
+	
+	@Autowired
+	public ErrorService errorService;
 
 	static {
 		SENTIMENT_LABEL_MAP.put("pos", SentimentType.POSITIVE);
@@ -59,6 +65,7 @@ public class TextProcessingComAnalyzer implements SentimentAnalyzer {
 			
 			return sentiment;
 		} catch (Throwable t) {
+			errorService.saveError(t, CLASS_NAME);
 			throw new SentimentRetrievalException(t);
 		}
 	}
@@ -68,6 +75,7 @@ public class TextProcessingComAnalyzer implements SentimentAnalyzer {
 		try {
 			return API_TEST_TEXT_SENTIMENT == this.getSentiment(API_TEST_TEXT);
 		} catch (Throwable t) {
+			errorService.saveError(t, CLASS_NAME);
 			return false;
 		}
 	}

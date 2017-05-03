@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -18,11 +19,16 @@ import com.google.gson.JsonParser;
 import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentAnalyzer;
 import ee.ttu.idk0071.sentiment.lib.analysis.api.SentimentRetrievalException;
 import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentType;
+import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 
 public class ViveknSentimentAnalyzer implements SentimentAnalyzer {
 	private static final String API_URL = "http://sentiment.vivekn.com/api/text/";
 	private static final String MAIN_PAGE_URL = "http://sentiment.vivekn.com";
+	private static final String CLASS_NAME = ViveknSentimentAnalyzer.class.getName();
+	
+	@Autowired
+	public ErrorService errorService;
 
 	@Override
 	public SentimentType getSentiment(String text) throws SentimentRetrievalException {
@@ -49,6 +55,7 @@ public class ViveknSentimentAnalyzer implements SentimentAnalyzer {
 			
 			return SentimentType.valueOf(sentimentString.toUpperCase());
 		} catch (Throwable t) {
+			errorService.saveError(t, CLASS_NAME);
 			throw new SentimentRetrievalException(t);
 		}
 	}

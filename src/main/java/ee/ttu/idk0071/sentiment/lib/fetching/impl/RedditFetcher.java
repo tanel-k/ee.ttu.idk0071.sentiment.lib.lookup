@@ -9,11 +9,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.lib.fetching.api.Fetcher;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.FetchException;
 import ee.ttu.idk0071.sentiment.lib.fetching.objects.Query;
@@ -32,6 +34,10 @@ public class RedditFetcher implements Fetcher {
 	private static final String SEARCH_ENDPOINT_URL = "https://www.reddit.com/search.json";
 	private static final String PARAM_QUERY = "q";
 	private static final String PARAM_AFTER = "after";
+	private static final String CLASS_NAME = RedditFetcher.class.getName();
+	
+	@Autowired
+	public ErrorService errorService;
 
 	@Override
 	public List<String> fetch(Query query) throws FetchException {
@@ -109,8 +115,10 @@ public class RedditFetcher implements Fetcher {
 			
 			return results;
 		} catch (FetchException ex) {
+			errorService.saveError(ex, CLASS_NAME);
 			throw ex;
 		} catch (Throwable t) {
+			errorService.saveError(t, CLASS_NAME);
 			throw new FetchException(t);
 		}
 	}
