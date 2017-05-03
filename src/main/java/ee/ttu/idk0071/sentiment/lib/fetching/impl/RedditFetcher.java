@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -21,6 +22,8 @@ import ee.ttu.idk0071.sentiment.lib.utils.StringUtils;
 
 public class RedditFetcher implements Fetcher {
 	private static final long THROTTLE_MILLIS = 500;
+	private static final long COOLDOWN_MILLIS = 500;
+	private static final int MAX_RETRIES = 10;
 	private static final String PROP_TITLE = "title";
 	private static final String PROP_SELF_TEXT = "selftext";
 	private static final String PROP_CHILDREN = "children";
@@ -39,6 +42,7 @@ public class RedditFetcher implements Fetcher {
 			
 			String afterKey = null;
 			List<String> results = new LinkedList<String>();
+			int retries = 5;
 			PRIMARY: do {
 				HttpGet get = new HttpGet(pagedURL);
 				HTTPUtils.setUserAgentHeader(get);
@@ -46,6 +50,22 @@ public class RedditFetcher implements Fetcher {
 				HttpResponse response = client.execute(get);
 				
 				if (!HTTPUtils.checkResponseOK(response)) {
+					if (response.getStatusLine().getStatusCode() == HttpStatus.SC_SERVICE_UNAVAILABLE) {
+						// high server load
+						if (retries > 0) {
+							retries--;
+							
+							try {
+								// wait before retrying
+								Thread.sleep(COOLDOWN_MILLIS);
+							} catch (InterruptedException ex) {
+								// not interested
+							}
+							
+							continue;
+						}
+					}
+					
 					throw new FetchException("Endpoint responded with code " + response.getStatusLine().getStatusCode());
 				}
 				
@@ -82,7 +102,9 @@ public class RedditFetcher implements Fetcher {
 				} catch (InterruptedException ex) {
 					// don't care
 				}
+				
 				pagedURL = queryURL + "&" + PARAM_AFTER + "=" + afterKey;
+				retries = MAX_RETRIES;
 			} while (!StringUtils.isEmpty(afterKey) && results.size() < query.getMaxResults());
 			
 			return results;
