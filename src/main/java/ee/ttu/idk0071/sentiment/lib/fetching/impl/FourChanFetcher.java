@@ -1,5 +1,6 @@
 package ee.ttu.idk0071.sentiment.lib.fetching.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -53,9 +54,9 @@ public class FourChanFetcher implements Fetcher {
 	private static final String PROP_QUERIES = "queries";
 	private static final String PROP_LINK = "link";
 
-	private static String get4chanCustomSearchURL(String searchString, FourChanCustomSearchCredentials credentials, int linksPerPage, long linkStartIndex) {
+	private static String get4chanCustomSearchURL(String searchString, FourChanCustomSearchCredentials credentials, int linksPerPage, long linkStartIndex) throws UnsupportedEncodingException {
 		return GOOGLE_CUSTOM_SEARCH_URL_TEMPLATE
-				.replace(TEMPLATE_KEY_SEARCH_STRING, searchString)
+				.replace(TEMPLATE_KEY_SEARCH_STRING, HTTPUtils.urlEncode(searchString))
 				.replace(TEMPLATE_KEY_COUNT, String.valueOf(linksPerPage))
 				.replace(TEMPLATE_KEY_START, String.valueOf(linkStartIndex))
 				.replace(TEMPLATE_KEY_LANGUAGE, RESULT_SET_LANG_EN)
