@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -65,6 +66,10 @@ public class FourChanFetcher implements Fetcher {
 	private static class FourChanCustomSearchCredentials {
 		String googleCustomSearchKey;
 		String googleAPIKey;
+	
+		public boolean hasMissingElements() {
+			return StringUtils.isEmpty(googleCustomSearchKey) || StringUtils.isEmpty(googleAPIKey);
+		}
 	}
 
 	@Override
@@ -73,6 +78,9 @@ public class FourChanFetcher implements Fetcher {
 			FourChanCustomSearchCredentials credentials = new FourChanCustomSearchCredentials();
 			credentials.googleAPIKey = query.getCredentials().get(CRED_KEY_GOOGLE_API_KEY);
 			credentials.googleCustomSearchKey = query.getCredentials().get(CRED_KEY_GOOGLE_4CHAN_CUSTOM_SEARCH_KEY);
+			if (credentials.hasMissingElements()) {
+				throw new FetchException("Missing credentials");
+			}
 			
 			String searchString = query.getKeyword();
 			// max count = 10
@@ -125,7 +133,7 @@ public class FourChanFetcher implements Fetcher {
 				
 				JsonObject queries = responseJson.get(PROP_QUERIES).getAsJsonObject();
 				JsonElement nextPageArrayElement = queries.get(PROP_NEXTPAGE);
-				if (!nextPageArrayElement.isJsonNull()) {
+				if (nextPageArrayElement != null) {
 					JsonArray nextPageArray = nextPageArrayElement.getAsJsonArray();
 					if (nextPageArray.size() < 1) {
 						break;
@@ -159,6 +167,8 @@ public class FourChanFetcher implements Fetcher {
 			}
 			
 			return results;
+		} catch (FetchException ex) {
+			throw ex;
 		} catch (Throwable t) {
 			throw new FetchException(t);
 		}
