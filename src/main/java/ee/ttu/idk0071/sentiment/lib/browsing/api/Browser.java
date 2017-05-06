@@ -11,6 +11,7 @@ public interface Browser {
 
 	public List<String> getAttributeValues(String querySelector, String attribute);
 	public List<String> getTexts(String querySelector);
+	public int countElements(String querySelector);
 	public Object executeScript(String script);
 	public String getHTML();
 }

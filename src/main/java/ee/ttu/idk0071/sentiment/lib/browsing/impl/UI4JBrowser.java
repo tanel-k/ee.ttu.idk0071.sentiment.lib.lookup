@@ -5,13 +5,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.ui4j.api.browser.BrowserEngine;
-import com.ui4j.api.browser.BrowserFactory;
 import com.ui4j.api.browser.Page;
 import com.ui4j.api.dom.Element;
+import com.ui4j.webkit.WebKitBrowserProvider;
 
 import ee.ttu.idk0071.sentiment.lib.browsing.api.Browser;
 
 public class UI4JBrowser implements Browser {
+	static WebKitBrowserProvider browserEngineProvider = new WebKitBrowserProvider();
+
 	BrowserEngine browserEngine;
 	Page currentPage;
 
@@ -42,7 +44,8 @@ public class UI4JBrowser implements Browser {
 
 	@Override
 	public void close() {
-		browserEngine.shutdown();
+		currentPage.close();
+		// do not use browserEngine.shutdown() unless you want to restart the jar
 	}
 
 	@Override
@@ -68,6 +71,11 @@ public class UI4JBrowser implements Browser {
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public int countElements(String querySelector) {
+		return queryAll(querySelector).size();
+	}
+
 	protected Optional<Element> query(String querySelector) {
 		return currentPage.getDocument().query(querySelector);
 	}
@@ -77,6 +85,6 @@ public class UI4JBrowser implements Browser {
 	}
 
 	public UI4JBrowser() {
-		browserEngine = BrowserFactory.getWebKit();
+		browserEngine = browserEngineProvider.create();
 	}
 }
