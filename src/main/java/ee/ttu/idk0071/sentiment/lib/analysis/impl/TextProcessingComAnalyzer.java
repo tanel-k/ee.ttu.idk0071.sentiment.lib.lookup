@@ -23,6 +23,7 @@ import ee.ttu.idk0071.sentiment.lib.analysis.objects.SentimentType;
 import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 
 public class TextProcessingComAnalyzer implements SentimentAnalyzer {
+	private static final int MAX_TEXT_LENGTH = 80000;
 	private static final String API_URL = "http://text-processing.com/api/sentiment/";
 	private static final String API_TEST_TEXT = "great";
 	private static final SentimentType API_TEST_TEXT_SENTIMENT = SentimentType.POSITIVE;
@@ -37,6 +38,10 @@ public class TextProcessingComAnalyzer implements SentimentAnalyzer {
 	@Override
 	public SentimentType getSentiment(String text) throws SentimentRetrievalException {
 		try {
+			if (text.length() > MAX_TEXT_LENGTH) {
+				throw new SentimentRetrievalException("Max text length exceeded");
+			}
+			
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpPost post = new HttpPost(API_URL);
 			List<NameValuePair> nameValuePairs = new LinkedList<NameValuePair>();
@@ -45,7 +50,8 @@ public class TextProcessingComAnalyzer implements SentimentAnalyzer {
 			
 			HttpResponse response = client.execute(post);
 			if (!HTTPUtils.checkResponseOK(response)) {
-				throw new SentimentRetrievalException("Rejected according to response code");
+				throw new SentimentRetrievalException("Rejected according to response code: " 
+						+ response.getStatusLine().getStatusCode());
 			}
 			
 			String responseString = EntityUtils.toString(response.getEntity());
