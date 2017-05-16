@@ -19,8 +19,8 @@ import ee.ttu.idk0071.sentiment.lib.utils.HTMLUtils;
 import ee.ttu.idk0071.sentiment.lib.utils.HTTPUtils;
 
 public class DuckDuckGoFetcher implements Fetcher {
-	private static final String SCROLL_STOP_VALUE = "No more results";
-	private static final String DUCK_DUCK_GO_URL = "https://duckduckgo.com";
+	private static final String SCROLL_STOP_VALUE = "That’s about it for";
+	private static final String DUCK_DUCK_GO_URL = "https://tumblr.com";
 	private static final String RESULT_ANCHOR_SELECTOR = ".result a.result__a";
 
 	@Override
