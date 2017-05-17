@@ -145,7 +145,7 @@ public abstract class SearchEngineFetcher implements Fetcher {
 	protected String buildSearchPageURL(String searchTerm, long offset) 
 			throws UnsupportedEncodingException {
 		return searchPageURLTemplate
-			.replace(QUERY_PLACEHOLDER, HTTPUtils.urlEncode(searchTerm))
+			.replace(QUERY_PLACEHOLDER, HTTPUtils.getURLEncodedValue(searchTerm))
 			.replace(RESULTS_PER_PAGE_PLACEHOLDER, String.valueOf(maxResultsPerPage))
 			.replace(OFFSET_PLACEHOLDER, String.valueOf(offset));
 	}

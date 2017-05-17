@@ -93,7 +93,7 @@ public class GoogleUtils {
 				}
 				
 				return SEARCH_PAGE_URL_TEMPLATE
-					.replace(QUERY_PLACEHOLDER, HTTPUtils.urlEncode(queryStringBuf.toString()))
+					.replace(QUERY_PLACEHOLDER, HTTPUtils.getURLEncodedValue(queryStringBuf.toString()))
 					.replace(RESULTS_PER_PAGE_PLACEHOLDER, String.valueOf(this.resultsPerPage))
 					.replace(OFFSET_PLACEHOLDER, String.valueOf(this.offset));
 			} catch (UnsupportedEncodingException e) {

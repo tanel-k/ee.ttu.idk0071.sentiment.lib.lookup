@@ -36,7 +36,7 @@ public class RedditFetcher implements Fetcher {
 	@Override
 	public List<String> fetch(Query query) throws FetchException {
 		try {
-			final String queryURL = SEARCH_ENDPOINT_URL + "?" + PARAM_QUERY + "=" + HTTPUtils.urlEncode(query.getKeyword());
+			final String queryURL = SEARCH_ENDPOINT_URL + "?" + PARAM_QUERY + "=" + HTTPUtils.getURLEncodedValue(query.getKeyword());
 			String pagedURL = queryURL;
 			HttpClient client = HttpClientBuilder.create().build();
 			

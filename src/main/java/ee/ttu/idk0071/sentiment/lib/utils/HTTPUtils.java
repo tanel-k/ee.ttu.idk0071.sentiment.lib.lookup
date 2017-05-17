@@ -1,6 +1,7 @@
 package ee.ttu.idk0071.sentiment.lib.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -25,6 +26,10 @@ public class HTTPUtils {
 	
 		public HTMLRetrievalException(Throwable t) {
 			super(t);
+		}
+	
+		public HTMLRetrievalException(String msg) {
+			super(msg);
 		}
 	}
 
@@ -79,6 +84,30 @@ public class HTTPUtils {
 		return statusCode >= 200 && statusCode <= 299;
 	}
 
+	public static String getString(String fromURL) throws HTMLRetrievalException {
+		try {
+			return getString(new URL(fromURL));
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Unacceptable URL");
+		}
+	}
+
+	public static String getString(URL fromURL) throws HTMLRetrievalException {
+		try {
+			HttpResponse response = get(fromURL);
+			if (checkResponseOK(response)) {
+				return EntityUtils.toString(response.getEntity());
+			} else {
+				throw new HTMLRetrievalException("Rejected with response code " 
+						+ response.getStatusLine().getStatusCode());
+			}
+		} catch (HTMLRetrievalException ex) {
+			throw ex;
+		} catch (Throwable t) {
+			throw new HTMLRetrievalException(t);
+		}
+	}
+
 	public static String getStringWithTimeout(URL fromURL) throws HTMLRetrievalException {
 		return getStringWithTimeout(fromURL, DEFAULT_TIMEOUT);
 	}
@@ -110,7 +139,7 @@ public class HTTPUtils {
 		return new BasicHeader("Cookie", cookieBuilder.toString());
 	}
 
-	public static String urlEncode(String value) throws UnsupportedEncodingException {
+	public static String getURLEncodedValue(String value) throws UnsupportedEncodingException {
 		return URLEncoder.encode(value, "UTF-8");
 	}
 
