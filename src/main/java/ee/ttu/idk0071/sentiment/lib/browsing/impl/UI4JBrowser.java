@@ -9,9 +9,9 @@ import com.ui4j.api.browser.Page;
 import com.ui4j.api.dom.Element;
 import com.ui4j.webkit.WebKitBrowserProvider;
 
-import ee.ttu.idk0071.sentiment.lib.browsing.api.Browser;
+import ee.ttu.idk0071.sentiment.lib.browsing.api.BrowserSimulator;
 
-public class UI4JBrowser implements Browser {
+public class UI4JBrowser implements BrowserSimulator {
 	static WebKitBrowserProvider browserEngineProvider = new WebKitBrowserProvider();
 
 	BrowserEngine browserEngine;
@@ -74,6 +74,21 @@ public class UI4JBrowser implements Browser {
 	@Override
 	public int countElements(String querySelector) {
 		return queryAll(querySelector).size();
+	}
+
+	@Override
+	public boolean doesElementExist(String querySelector) {
+		Optional<Element> optElement = query(querySelector);
+		return optElement != null && optElement.isPresent();
+	}
+
+	@Override
+	public String getElementText(String querySelector) {
+		if (doesElementExist(querySelector)) {
+			return query(querySelector).get().getInnerHTML();
+		}
+	
+		return null;
 	}
 
 	protected Optional<Element> query(String querySelector) {
